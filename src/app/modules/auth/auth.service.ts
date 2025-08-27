@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import AppError from "../../errorHelpers/AppError";
 import { User } from "../user/user.model";
 import httpStatus from "http-status-codes";
@@ -31,11 +34,19 @@ const userLogin = async (payload: Partial<IUser>) => {
         envVars.JWT_ACCESS_SECRET,
         envVars.JWT_ACCESS_EXPIRES
     );
-  
+
+    const refreshToken = generateToken(
+        jwtPayload,
+        envVars.JWT_REFRESH_SECRET,
+        envVars.JWT_REFRESH_EXPIRES
+    );
+
+    const { password, ...rest } = userExist.toObject();
 
     return {
-        email: userExist.email,
         accessToken,
+        refreshToken,
+        user: rest,
     };
 };
 
