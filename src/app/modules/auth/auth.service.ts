@@ -40,7 +40,9 @@ const userLogin = async (payload: Partial<IUser>) => {
 };
 
 const getNewAccessToken = async (refreshToken: string) => {
-    const accessToken = await createNewAccessTokenWithRefreshToken(refreshToken);
+    const accessToken = await createNewAccessTokenWithRefreshToken(
+        refreshToken
+    );
     // const verifiedRefreshToken = verifyToken(
     //     refreshToken,
     //     envVars.JWT_REFRESH_SECRET
@@ -70,10 +72,32 @@ const getNewAccessToken = async (refreshToken: string) => {
     //     envVars.JWT_ACCESS_EXPIRES
     // );
 
-    return accessToken
+    return accessToken;
+};
+
+const changePassword = async (
+    oldPassword: string,
+    newPassword: string,
+    userId: string
+) => {
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new AppError(httpStatus.NOT_FOUND, "User not found");
+    }
+    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isPasswordMatch) {
+        throw new AppError(httpStatus.BAD_REQUEST, "Password dose not match");
+    }
+    const hashedPassword = await bcrypt.hash(
+        newPassword,
+        Number(envVars.BCRYPT_SALT_ROUND)
+    );
+    user.password = newPassword;
+    await user.save();
 };
 
 export const AuthServices = {
     userLogin,
     getNewAccessToken,
+    changePassword,
 };
