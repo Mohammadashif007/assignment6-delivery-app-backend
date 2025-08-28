@@ -6,8 +6,7 @@ import { User } from "../user/user.model";
 import httpStatus from "http-status-codes";
 import bcrypt from "bcrypt";
 import { IUser } from "../user/user.interface";
-import { envVars } from "../../config/env";
-import { generateToken } from "../../utils/jwt";
+import { createUserToken } from "../../utils/userTokens";
 
 const userLogin = async (payload: Partial<IUser>) => {
     const userExist = await User.findOne({ email: payload.email });
@@ -23,29 +22,13 @@ const userLogin = async (payload: Partial<IUser>) => {
         throw new AppError(httpStatus.BAD_REQUEST, "Invalid credential");
     }
 
-    const jwtPayload = {
-        userId: userExist._id,
-        email: userExist.email,
-        role: userExist.role,
-    };
-
-    const accessToken = generateToken(
-        jwtPayload,
-        envVars.JWT_ACCESS_SECRET,
-        envVars.JWT_ACCESS_EXPIRES
-    );
-
-    const refreshToken = generateToken(
-        jwtPayload,
-        envVars.JWT_REFRESH_SECRET,
-        envVars.JWT_REFRESH_EXPIRES
-    );
+    const userTokens = createUserToken(userExist);
 
     const { password, ...rest } = userExist.toObject();
 
     return {
-        accessToken,
-        refreshToken,
+        accessToken: userTokens.accessToken,
+        refreshToken: userTokens.refreshToken,
         user: rest,
     };
 };

@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 /* eslint-disable no-unused-vars */
 export enum Role {
     SENDER = "SENDER",
@@ -6,6 +8,7 @@ export enum Role {
 }
 
 export interface IUser {
+    _id?: Types.ObjectId;
     name: string;
     email: string;
     password: string;
