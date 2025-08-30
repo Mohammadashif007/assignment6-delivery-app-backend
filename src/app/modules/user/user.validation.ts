@@ -12,7 +12,8 @@ export const createUserZodSchema = z.object({
 
     password: z
         .string({ error: "Password must be a string" })
-        .min(6, { message: "Password must be at least 6 characters" }),
+        .min(6, { message: "Password must be at least 6 characters" })
+        .optional(),
 
     role: z.enum(["SENDER", "RECEIVER", "ADMIN"]).optional(),
 

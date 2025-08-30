@@ -7,13 +7,19 @@ export enum Role {
     ADMIN = "ADMIN",
 }
 
+export interface IAuths {
+    provider: "google" | "credentials";
+    providerId: string;
+}
+
 export interface IUser {
     _id?: Types.ObjectId;
     name: string;
     email: string;
-    password: string;
+    password?: string;
     role: Role;
     address?: string;
     phone?: string;
-    isBlocked: boolean;
+    auths: IAuths[];
+    isBlocked?: boolean;
 }

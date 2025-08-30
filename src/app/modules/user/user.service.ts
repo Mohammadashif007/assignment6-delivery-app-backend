@@ -2,11 +2,27 @@ import AppError from "../../errorHelpers/AppError";
 import { IUser } from "./user.interface";
 import { User } from "./user.model";
 import httpStatus from "http-status-codes";
+import bcrypt from "bcrypt";
+import { envVars } from "../../config/env";
 
 const createUserIntoDB = async (payload: IUser) => {
-    const user = await User.create(payload);
+    const isUserExist = await User.findOne({ email: payload.email });
+    if (isUserExist) {
+        throw new AppError(httpStatus.FORBIDDEN, "User already exist");
+    }
+    const hashedPassword = await bcrypt.hash(
+        payload.password as string,
+        Number(envVars.BCRYPT_SALT_ROUND)
+    );
+    const authProvider = { provider: "credentials", providerId: payload.email };
+    const user = await User.create({
+        ...payload,
+        password: hashedPassword,
+        auths: [authProvider],
+    });
     return user;
 };
+
 const getAllUsersFromDB = async () => {
     const users = await User.find();
     const totalUsers = await User.countDocuments();

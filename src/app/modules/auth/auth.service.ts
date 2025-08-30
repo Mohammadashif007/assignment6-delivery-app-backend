@@ -22,7 +22,7 @@ const userLogin = async (payload: Partial<IUser>) => {
     }
     const matchPassword = await bcrypt.compare(
         payload.password as string,
-        userExist.password
+        userExist.password as string
     );
     if (!matchPassword) {
         throw new AppError(httpStatus.BAD_REQUEST, "Invalid credential");
@@ -84,7 +84,7 @@ const changePassword = async (
     if (!user) {
         throw new AppError(httpStatus.NOT_FOUND, "User not found");
     }
-    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password as string);
     if (!isPasswordMatch) {
         throw new AppError(httpStatus.BAD_REQUEST, "Password dose not match");
     }
