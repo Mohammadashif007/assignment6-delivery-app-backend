@@ -31,4 +31,8 @@ router.patch(
     UserControllers.unblockUser
 );
 
+
+// ! get user profile
+router.get("/me", checkAuth(...Object.values(Role)), UserControllers.getMe)
+
 export const UserRoutes = router;
