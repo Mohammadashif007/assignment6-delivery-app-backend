@@ -1,4 +1,5 @@
 import z from "zod";
+import { Role } from "./user.interface";
 
 // ! create user zod validation schema
 export const createUserZodSchema = z.object({
@@ -15,7 +16,10 @@ export const createUserZodSchema = z.object({
         .min(6, { message: "Password must be at least 6 characters" })
         .optional(),
 
-    role: z.enum(["SENDER", "RECEIVER", "ADMIN"]).optional(),
+    role: z
+        .string()
+        .optional()
+        .transform((val) => (val ? (val.toUpperCase() as Role) : Role.SENDER)),
 
     phone: z
         .string({ error: "Phone Number must be string" })

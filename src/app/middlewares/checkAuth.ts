@@ -9,7 +9,8 @@ export const checkAuth =
     (...authRoles: string[]) =>
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const accessToke = req.headers.authorization;
+            const accessToke =
+                req.headers.authorization || req.cookies?.accessToken;
             if (!accessToke) {
                 throw new AppError(
                     httpStatus.NOT_FOUND,
