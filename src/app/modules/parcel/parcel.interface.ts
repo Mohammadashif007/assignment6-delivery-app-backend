@@ -20,7 +20,7 @@ export interface IStatusLog {
 
 export interface IParcel {
     weight: string;
-    price: number;
+    price?: number;
     trackingId?: string;
     isBlocked?: boolean;
     senderId?: Types.ObjectId;

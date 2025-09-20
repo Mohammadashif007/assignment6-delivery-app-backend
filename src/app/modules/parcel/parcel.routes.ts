@@ -79,7 +79,7 @@ router.get(
 );
 
 // ! get all parcel (ADMIN)
-router.get("/", checkAuth(Role.ADMIN), ParcelControllers.getAllParcelsByAdmin);
+router.get("/admin", checkAuth(Role.ADMIN), ParcelControllers.getAllParcelsByAdmin);
 
 // ! block parcel by (ADMIN)
 router.patch(

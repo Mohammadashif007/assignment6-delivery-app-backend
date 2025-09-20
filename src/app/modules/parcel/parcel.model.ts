@@ -18,7 +18,7 @@ const statusLogSchema = new Schema<IStatusLog>(
 
 const parcelSchema = new Schema<IParcel>({
     weight: { type: String, required: true },
-    price: { type: Number, required: true },
+    price: { type: Number},
     trackingId: { type: String, unique: true },
     isBlocked: { type: Boolean, default: false },
     senderId: { type: Schema.Types.ObjectId, ref: "User" },

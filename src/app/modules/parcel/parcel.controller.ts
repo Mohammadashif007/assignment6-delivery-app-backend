@@ -198,5 +198,5 @@ export const ParcelControllers = {
     getAllParcelsByAdmin,
     blockParcel,
     unblockParcel,
-    trackParcel
+    trackParcel,
 };
