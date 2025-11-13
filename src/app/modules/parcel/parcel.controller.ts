@@ -7,7 +7,7 @@ import { JwtPayload } from "jsonwebtoken";
 
 // ! create parcel
 const createParcel = catchAsync(async (req: Request, res: Response) => {
-    const senderId = req.user?.userId;
+    const senderId = (req.user as JwtPayload)?.userId;
     const result = await ParcelServices.createParcelIntoDB({
         ...req.body,
         senderId,
@@ -22,7 +22,7 @@ const createParcel = catchAsync(async (req: Request, res: Response) => {
 
 // ! retrieve sender own parcel
 const getAllMyParcel = catchAsync(async (req: Request, res: Response) => {
-    const senderId = req.user?.userId;
+    const senderId = (req.user as JwtPayload)?.userId;
     const result = await ParcelServices.getMyParcelFromDB(senderId);
     sendResponse(res, {
         success: true,
@@ -62,7 +62,7 @@ const statusLog = catchAsync(async (req: Request, res: Response) => {
 // ! parcel dispatch
 const parcelDispatch = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const updatedBy = req.user?.role;
+    const updatedBy = (req.user as JwtPayload)?.role;
     const result = await ParcelServices.dispatchParcelFromDB(id, updatedBy);
 
     sendResponse(res, {
@@ -76,7 +76,7 @@ const parcelDispatch = catchAsync(async (req: Request, res: Response) => {
 // ! parcel in transit
 const parcelInTransit = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const updatedBy = req.user?.role;
+    const updatedBy = (req.user as JwtPayload)?.role;
     const result = await ParcelServices.parcelInTransitFromDB(id, updatedBy);
     sendResponse(res, {
         success: true,
@@ -102,7 +102,7 @@ const parcelOUtForDelivery = catchAsync(async (req: Request, res: Response) => {
 
 // ! confirm parcel delivered by (receiver)
 const confirmDelivery = catchAsync(async (req: Request, res: Response) => {
-    const receiverId = req.user?.userId;
+    const receiverId = (req.user as JwtPayload)?.userId;
     const { id } = req.params;
     const result = await ParcelServices.confirmParcelDelivery(id, receiverId);
     sendResponse(res, {
@@ -115,7 +115,7 @@ const confirmDelivery = catchAsync(async (req: Request, res: Response) => {
 
 // ! incoming parcel (RECEIVER)
 const getIncomingParcels = catchAsync(async (req: Request, res: Response) => {
-    const receiverId = req.user?.userId;
+    const receiverId = (req.user as JwtPayload)?.userId;
     const result = await ParcelServices.findIncomingParcels(receiverId);
     sendResponse(res, {
         success: true,
@@ -127,7 +127,7 @@ const getIncomingParcels = catchAsync(async (req: Request, res: Response) => {
 
 // ! Delivery history (RECEIVER)
 const getDeliveryHistory = catchAsync(async (req: Request, res: Response) => {
-    const receiverId = req.user?.userId;
+    const receiverId = (req.user as JwtPayload)?.userId;
     const result = await ParcelServices.findDeliveredParcels(receiverId);
     sendResponse(res, {
         success: true,
@@ -139,7 +139,10 @@ const getDeliveryHistory = catchAsync(async (req: Request, res: Response) => {
 
 // ! Get all parcel (ADMIN)
 const getAllParcelsByAdmin = catchAsync(async (req: Request, res: Response) => {
-    const result = await ParcelServices.getAllParcelsByAdminFromDB();
+    const query = req.query;
+    const result = await ParcelServices.getAllParcelsByAdminFromDB(
+        query as Record<string, string>
+    );
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.OK,

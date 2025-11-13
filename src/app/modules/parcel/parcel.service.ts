@@ -5,6 +5,7 @@ import AppError from "../../errorHelpers/AppError";
 import httpStatus from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
 import { Role } from "../user/user.interface";
+import { searchableFields } from "./parcel.constant";
 
 // ! create parcel
 const createParcelIntoDB = async (payload: IParcel) => {
@@ -235,9 +236,32 @@ const findDeliveredParcels = async (receiverId: string) => {
 };
 
 // ! get all parcel (ADMIN)
-const getAllParcelsByAdminFromDB = async () => {
-    const parcels = await Parcel.find().populate("senderId receiverId");
-    return parcels;
+const getAllParcelsByAdminFromDB = async (query: Record<string, string>) => {
+    const filter = query;
+    const searchTerm = query.searchTerm || "";
+
+    delete filter["searchTerm"];
+    // ! search for parcel
+    const searchQuery = {
+        $or: searchableFields.map((field) => ({
+            [field]: { $regex: searchTerm, $options: "i" },
+        })),
+    };
+
+    // ! get all parcel
+    const parcels = await Parcel.find(searchQuery)
+        .find(filter).sort({})
+        .populate("senderId receiverId");
+
+    // ! get total count
+    const total = await Parcel.countDocuments(searchQuery);
+
+    return {
+        metaData: {
+            total: total,
+        },
+        parcelData: parcels,
+    };
 };
 
 // ! parcel block by (ADMIN)

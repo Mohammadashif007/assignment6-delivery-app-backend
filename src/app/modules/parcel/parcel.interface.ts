@@ -28,5 +28,5 @@ export interface IParcel {
     parcelStatus?: ParcelStatus;
     originalAddress: string;
     destinationAddress: string;
-    statusLog?: IStatusLog[];
+    statusLog?: IStatusLog[]; 
 }
