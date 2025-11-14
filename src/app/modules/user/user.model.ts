@@ -28,14 +28,6 @@ const userSchema = new Schema<IUser>(
     { timestamps: true, versionKey: false }
 );
 
-// ! password hashing
-// userSchema.pre("save", async function (next) {
-//     if (!this.isModified("password")) return next();
-//     this.password = await bcrypt.hash(
-//         this.password,
-//         Number(envVars.BCRYPT_SALT_ROUND)
-//     );
-//     next();
-// });
+
 
 export const User = model<IUser>("User", userSchema);

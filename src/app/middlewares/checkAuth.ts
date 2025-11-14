@@ -17,10 +17,13 @@ export const checkAuth =
                     "You are not authorized"
                 );
             }
+
+
             const verifiedToken = verifyToken(
                 accessToke,
                 envVars.JWT_ACCESS_SECRET
             ) as JwtPayload;
+
             if (!authRoles.includes(verifiedToken.role)) {
                 throw new AppError(
                     httpStatus.UNAUTHORIZED,

@@ -9,6 +9,7 @@ import AppError from "../../errorHelpers/AppError";
 import { createUserToken } from "../../utils/userTokens";
 import { envVars } from "../../config/env";
 import passport from "passport";
+import { JwtPayload } from "jsonwebtoken";
 
 const userLogin = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -83,7 +84,7 @@ const userLogOut = catchAsync(async (req: Request, res: Response) => {
 });
 
 const changePassword = catchAsync(async (req: Request, res: Response) => {
-    const userId = req.user?.userId;
+    const userId = (req.user as JwtPayload)?.userId;
     const { oldPassword, newPassword } = req.body;
     await AuthServices.changePassword(oldPassword, newPassword, userId);
     sendResponse(res, {

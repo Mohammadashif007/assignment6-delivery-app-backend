@@ -13,6 +13,7 @@ export const createUserToken = (user: Partial<IUser>) => {
         role: user.role,
     };
 
+
     const accessToken = generateToken(
         jwtPayload,
         envVars.JWT_ACCESS_SECRET,
@@ -31,9 +32,10 @@ export const createUserToken = (user: Partial<IUser>) => {
     };
 };
 
-
-export const createNewAccessTokenWithRefreshToken = async(refreshToken: string) => {
-        const verifiedRefreshToken = verifyToken(
+export const createNewAccessTokenWithRefreshToken = async (
+    refreshToken: string
+) => {
+    const verifiedRefreshToken = verifyToken(
         refreshToken,
         envVars.JWT_REFRESH_SECRET
     ) as JwtPayload;
@@ -65,4 +67,4 @@ export const createNewAccessTokenWithRefreshToken = async(refreshToken: string) 
     return {
         accessToken,
     };
-}
+};

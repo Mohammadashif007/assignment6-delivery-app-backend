@@ -15,7 +15,9 @@ router.post(
 );
 
 // ! get all user by admin
-router.get("/", checkAuth(Role.ADMIN), UserControllers.getAllUsers);
+router.get("/",
+    //  checkAuth(Role.ADMIN),
+      UserControllers.getAllUsers);
 
 // ! block user by admin
 router.patch(
@@ -31,8 +33,7 @@ router.patch(
     UserControllers.unblockUser
 );
 
-
 // ! get user profile
-router.get("/me", checkAuth(...Object.values(Role)), UserControllers.getMe)
+router.get("/me", checkAuth(...Object.values(Role)), UserControllers.getMe);
 
 export const UserRoutes = router;

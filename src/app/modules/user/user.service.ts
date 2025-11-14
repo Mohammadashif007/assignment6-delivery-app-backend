@@ -25,6 +25,9 @@ const createUserIntoDB = async (payload: IUser) => {
 
 const getAllUsersFromDB = async () => {
     const users = await User.find();
+    if (users.length === 0) {
+        throw new AppError(httpStatus.BAD_REQUEST, "User is not found");
+    }
     const totalUsers = await User.countDocuments();
     return { data: users, meta: { total: totalUsers } };
 };
@@ -58,8 +61,8 @@ const unblockUserByAdmin = async (userId: string) => {
 const getMe = async (userId: string) => {
     const user = await User.findById(userId).select("-password");
     return {
-        data: user
-    }
+        data: user,
+    };
 };
 
 export const UserServices = {
@@ -67,5 +70,5 @@ export const UserServices = {
     getAllUsersFromDB,
     blockUserByAdmin,
     unblockUserByAdmin,
-    getMe
+    getMe,
 };
