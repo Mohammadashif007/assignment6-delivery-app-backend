@@ -6,7 +6,8 @@ import httpStatus from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
 import { Role } from "../user/user.interface";
 import { searchableFields } from "./parcel.constant";
-import { excludeFields } from "../../constent";
+import { QueryBuilder } from "../../utils/queryBuilder";
+
 
 // ! create parcel
 const createParcelIntoDB = async (payload: IParcel) => {
@@ -238,38 +239,34 @@ const findDeliveredParcels = async (receiverId: string) => {
 
 
 
-
-
 // ! get all parcel (ADMIN)
 const getAllParcelsByAdminFromDB = async (query: Record<string, string>) => {
-    const filter = query;
-    const searchTerm = query.searchTerm || "";
-    const sort = query.sort || "-createdAt";
-    const fields = query.fields?.split(",").join("") || "";
-    const page = Number(query.page) || 1;
-    const limit = Number(query.limit) || 10;
-    const skip = (page - 1) * limit;
+    // const filter = query;
+    // const searchTerm = query.searchTerm || "";
+    // const sort = query.sort || "-createdAt";
+    // const fields = query.fields?.split(",").join("") || "";
+    // const page = Number(query.page) || 1;
+    // const limit = Number(query.limit) || 10;
+    // const skip = (page - 1) * limit;
 
-    for (const field of excludeFields) {
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-        delete filter[field];
-    }
+    // const searchQuery = {
+    //     $or: searchableFields.map((field) => ({
+    //         [field]: { $regex: searchTerm, $options: "i" },
+    //     })),
+    // };
 
-    const searchQuery = {
-        $or: searchableFields.map((field) => ({
-            [field]: { $regex: searchTerm, $options: "i" },
-        })),
-    };
+    // const filterQuery = Parcel.find(filter);
+    // const parcels = filterQuery.find(searchQuery);
 
+    const queryBuilder = new QueryBuilder(Parcel.find(), query);
+    const parcels = await queryBuilder.search(searchableFields).filter()
+        .modelQuery;
 
-
-    const filterQuery = Parcel.find(filter);
-    const parcels = filterQuery.find(searchQuery);
-    const allParcels = await parcels
-        .sort(sort)
-        .select(fields)
-        .limit(limit)
-        .skip(skip);
+    // const allParcels = await parcels
+    //     .sort(sort)
+    //     .select(fields)
+    //     .limit(limit)
+    //     .skip(skip);
 
     // ! get all parcel
     // const parcels = await Parcel.find(filter)
@@ -280,19 +277,19 @@ const getAllParcelsByAdminFromDB = async (query: Record<string, string>) => {
     //     .limit(limit)
     //     .populate("senderId receiverId");
     // ! get total count
-    const total = await Parcel.countDocuments();
-    const totalPage = Math.ceil(total / limit);
+    // const total = await Parcel.countDocuments();
+    // const totalPage = Math.ceil(total / limit);
 
-    const meta = {
-        page: page,
-        limit: limit,
-        total: total,
-        totalPage: totalPage,
-    };
+    // const meta = {
+    //     page: page,
+    //     limit: limit,
+    //     total: total,
+    //     totalPage: totalPage,
+    // };
 
     return {
-        metaData: meta,
-        parcelData: allParcels,
+        // metaData: meta,
+        parcelData: parcels,
     };
 };
 
