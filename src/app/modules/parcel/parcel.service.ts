@@ -264,6 +264,8 @@ const getAllParcelsByAdminFromDB = async (query: Record<string, string>) => {
         .paginate()
         .build();
 
+    const meta = await queryBuilder.getMeta();
+
     // const allParcels = await parcels
     //     .sort(sort)
     //     .select(fields)
@@ -292,6 +294,7 @@ const getAllParcelsByAdminFromDB = async (query: Record<string, string>) => {
     return {
         // metaData: meta,
         parcelData: parcels,
+        meta: meta,
     };
 };
 
