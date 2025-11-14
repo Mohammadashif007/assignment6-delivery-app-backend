@@ -53,4 +53,8 @@ export class QueryBuilder<T> {
         this.modelQuery = this.modelQuery.skip(skip).limit(limit);
         return this;
     }
+
+    build() {
+        return this.modelQuery;
+    }
 }

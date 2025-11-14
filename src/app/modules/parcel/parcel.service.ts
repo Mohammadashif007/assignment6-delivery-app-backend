@@ -8,7 +8,6 @@ import { Role } from "../user/user.interface";
 import { searchableFields } from "./parcel.constant";
 import { QueryBuilder } from "../../utils/queryBuilder";
 
-
 // ! create parcel
 const createParcelIntoDB = async (payload: IParcel) => {
     const trackingId = `TRK-${v4().split("-")[0].toUpperCase()}`;
@@ -237,8 +236,6 @@ const findDeliveredParcels = async (receiverId: string) => {
     });
 };
 
-
-
 // ! get all parcel (ADMIN)
 const getAllParcelsByAdminFromDB = async (query: Record<string, string>) => {
     // const filter = query;
@@ -259,8 +256,13 @@ const getAllParcelsByAdminFromDB = async (query: Record<string, string>) => {
     // const parcels = filterQuery.find(searchQuery);
 
     const queryBuilder = new QueryBuilder(Parcel.find(), query);
-    const parcels = await queryBuilder.search(searchableFields).filter()
-        .modelQuery;
+    const parcels = await queryBuilder
+        .search(searchableFields)
+        .filter()
+        .sort()
+        .fields()
+        .paginate()
+        .build();
 
     // const allParcels = await parcels
     //     .sort(sort)
