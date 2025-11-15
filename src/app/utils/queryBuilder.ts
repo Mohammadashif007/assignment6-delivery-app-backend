@@ -41,7 +41,7 @@ export class QueryBuilder<T> {
     }
 
     fields(): this {
-        const fields = this.query.fields?.split(",").join("") || "";
+        const fields = this.query.fields?.split(",").join(" ") || "";
         this.modelQuery = this.modelQuery.select(fields);
         return this;
     }
@@ -58,11 +58,39 @@ export class QueryBuilder<T> {
         return this.modelQuery;
     }
 
+    // async getMeta() {
+    //     const totalDocuments = await this.modelQuery.model.countDocuments();
+    //     const page = Number(this.query.page) || 1;
+    //     const limit = Number(this.query.limit) || 10;
+    //     const totalPage = Math.ceil(totalDocuments / limit);
+    //     return { page, limit, totalPage, total: totalDocuments };
+    // }
+
+    // async getMeta() {
+    //     const clonedQuery = this.modelQuery.clone(); // 🔥 this is the fix
+    //     const totalDocuments = await clonedQuery.model.countDocuments(
+    //         clonedQuery.getFilter()
+    //     );
+
+    //     const page = Number(this.query.page) || 1;
+    //     const limit = Number(this.query.limit) || 10;
+    //     const totalPage = Math.ceil(totalDocuments / limit);
+
+    //     return { page, limit, totalPage, total: totalDocuments };
+    // }
+
     async getMeta() {
-        const totalDocuments = await this.modelQuery.countDocuments();
+        const clonedQuery = this.modelQuery.clone();
+
+        // count with same filter as the main query
+        const totalDocuments = await clonedQuery.model.countDocuments(
+            clonedQuery.getFilter()
+        );
+
         const page = Number(this.query.page) || 1;
         const limit = Number(this.query.limit) || 10;
         const totalPage = Math.ceil(totalDocuments / limit);
+
         return { page, limit, totalPage, total: totalDocuments };
     }
 }

@@ -255,16 +255,22 @@ const getAllParcelsByAdminFromDB = async (query: Record<string, string>) => {
     // const filterQuery = Parcel.find(filter);
     // const parcels = filterQuery.find(searchQuery);
 
-    const queryBuilder = new QueryBuilder(Parcel.find(), query);
-    const parcels = await queryBuilder
-        .search(searchableFields)
-        .filter()
-        .sort()
-        .fields()
-        .paginate()
-        .build();
+    // const queryBuilder = new QueryBuilder(Parcel.find(), query);
+    // const parcels = await queryBuilder
+    //     .search(searchableFields)
+    //     .filter()
+    //     .sort()
+    //     .fields()
+    //     .paginate()
+    //     .build();
 
-    const meta = await queryBuilder.getMeta();
+    // const meta = await queryBuilder.getMeta();
+    // const queryExecute = await Promise.all([
+    //     queryBuilder.build(),
+    //     queryBuilder.getMeta(),
+    // ]);
+
+    // console.log(queryExecute);
 
     // const allParcels = await parcels
     //     .sort(sort)
@@ -291,10 +297,33 @@ const getAllParcelsByAdminFromDB = async (query: Record<string, string>) => {
     //     totalPage: totalPage,
     // };
 
+    // return {
+    // metaData: meta,
+    // parcelData: parcels,
+    // meta: meta,
+    // };
+
+    // ! fix query
+
+    const queryBuilder = new QueryBuilder(Parcel.find(), query)
+        .search(searchableFields)
+        .filter()
+        .sort()
+        .fields()
+        .paginate();
+
+    // ❗ Clone the main query before execution
+    const dataQuery = queryBuilder.build().clone();
+
+    // ❗ getMeta() already clones internally → safe
+    const meta = await queryBuilder.getMeta();
+
+    // Now safely execute the original query
+    const parcels = await dataQuery;
+
     return {
-        // metaData: meta,
         parcelData: parcels,
-        meta: meta,
+        meta,
     };
 };
 
